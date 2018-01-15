@@ -1,0 +1,54 @@
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#container {
+    position: relative;
+    width:960px;
+    height:560px;
+    overflow:hidden;
+}
+
+#twoplayer-input {
+   display: none;
+    opacity: 0;
+}
+
+#gifbutton {
+    position: absolute;
+    left:10px;
+    top:250px;
+    width:50px;
+    height:50px;
+    cursor: pointer;
+    z-index: 999;
+    display: none;
+}
+
+#playbutton {
+    position: absolute;
+    display: none;
+    z-index: 999;
+}
+
+@font-face {
+    font-family: 'Geek-a-byte-2';
+    src:url('../assets/fonts/Geek-a-byte-2.ttf.woff') format('woff'),
+        url('../assets/fonts/Geek-a-byte-2.ttf.svg#Geek-a-byte-2') format('svg'),
+        url('../assets/fonts/Geek-a-byte-2.ttf.eot'),
+        url('../assets/fonts/Geek-a-byte-2.ttf.eot?#iefix') format('embedded-opentype'); 
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Marker-Felt';
+    src:url('../assets/fonts/Marker-Felt.ttf.woff') format('woff'),
+        url('../assets/fonts/Marker-Felt.ttf.svg#Marker-Felt') format('svg'),
+        url('../assets/fonts/Marker-Felt.ttf.eot'),
+        url('../assets/fonts/Marker-Felt.ttf.eot?#iefix') format('embedded-opentype'); 
+    font-weight: normal;
+    font-style: normal;
+}

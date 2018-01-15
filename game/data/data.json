@@ -1,0 +1,35 @@
+{
+    "base_url": "http://www.nicktoons.co.uk/gsp/international/nicktoons.co.uk/games/html5/loud-house/living-loud/lincolns-list/",
+    "fonts" : [
+        { "fontName": "Geek-a-byte-2" },
+        { "fontName": "Marker-Felt" }
+    ],
+    "load_screen": {
+        "load_text": { "text": "LOADING...", "fontName": "Geek-a-byte-2", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 }
+    },
+    "intro_screen": {
+        "load_text": { "text": "LOADING...", "fontName": "Geek-a-byte-2", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 }
+    },
+    "menu_screen": {
+        "title": { "text": "Select a game to begin!", "fontName": "Geek-a-byte-2", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 },
+        "select_button": { "text": "Select", "fontName": "Geek-a-byte-2", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 }
+    },
+    "tracking": {
+        "active": false,
+        "channel": "",
+        "game_loaded": "loud house game loaded",
+        "one_player": "one player",
+        "two_player": "two player",
+        "task_complete": "task completed => ",
+        "medal_awarded": " medal awarded!",
+        "game_complete": "game complete"
+    },
+    "medals": [
+        { "id": 0, "name": "Energy Saver!", "description": "It’s not easy saving energy in a house this busy, but switching off the lights is a good start. Have a medal.", "collected": 0, "awarded": false, "inventoryimage": "medal_energy_saver.png", "fontName": "Marker-Felt", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 },
+        { "id": 1, "name": "Clean Freak!", "description": "Sometimes it feels like you’re constantly picking up after others, have a medal.", "collected": 0, "awarded": false, "inventoryimage": "medal_clean_freak.png", "fontName": "Marker-Felt", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 },
+        { "id": 2, "name": "Mailman!", "description": "With 13 birthdays in one house, there’s always cards lying around. Take this medal for picking them up.", "collected": 0, "awarded": false, "inventoryimage": "medal_mailman.png", "fontName": "Marker-Felt", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 },
+        { "id": 3, "name": "Adoorable!", "description": "You’ve just completed a secret task - opening every door in the house! Have this special medal.", "collected": 0, "awarded": false, "inventoryimage": "medal_adoorable.png", "fontName": "Marker-Felt", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 },
+        { "id": 4, "name": "Lazy boy!", "description": "Congratulations, you have successfully done nothing for a whole minute. Have a medal for your lack of effort.", "collected": 0, "awarded": false, "inventoryimage": "medal_lazy_boy.png", "fontName": "Marker-Felt", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 },
+        { "id": 5, "name": "Bun-Bun’s Back!", "description": "Bun-bun belongs here, well done for realising he was missing. That deserves a special medal.", "collected": 0, "awarded": false, "inventoryimage": "medal_bunbun_back.png", "fontName": "Marker-Felt", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 }
+    ]
+}

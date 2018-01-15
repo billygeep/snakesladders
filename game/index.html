@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Thundermans</title>
+     
+        <script src="http://www.nick.com/nick-assets/games/jsembed/jsembed.js"></script>    
+        <script type="text/javascript" >      
+        
+        // // Parameters configure jsembed itself.
+        // var params = {
+        //     //base: "/games/data/spongebob/spongebob-bikini-bottom-bop-em/html5/", // base url of all content. Defaults ""
+        //     base: "",
+        //     api: "", // If not a flambe game, leave it blank.
+        //     autoscale: "true", // update window.canvasScale on window resize? Defaults true.
+        //     indexroot: "true", // use index url as path root? If false, uses domain root instead. Defaults false (uses domain root).
+        //     //libs: ["yourLibrary.js"] // array of libs to embed before trying to launch app. Defaults []
+        // }           
+        // // Attributes will be set on the embed target for use by the app. "base" will be set as well.
+        // var attr = {                    
+        // };
+        // jsembed.embed("js/main.js", "embedtarget", "960", "560", params, attr);   //The first parameter will be your main js file
+    
+        </script>       
+        
+
+</head>
+
+
+<body style="padding: 0; margin: 0; background-color: black">	
+    <div id="embedtarget"></div>
+
+
+    <!--<Deject>-->
+    <!--build:js js/main.min.js -->
+    <script src="js/vendor/phaser.min.js"></script>
+    <script src="js/vendor/fontfaceobserver.js"></script>
+    <script src="js/lib/Style.js"></script>
+    <script src="js/lib/Webfontloader.js"></script>
+
+    <script src="js/states/Boot.js"></script>
+    <script src="js/states/Menu.js"></script>
+    <script src="js/states/Game.js"></script>
+    <script src="js/states/Intro.js"></script>
+
+    <script src="js/manager/AudioManager.js"></script>
+
+    <script src="js/prefabs/hud/Map.js"></script>
+    <script src="js/prefabs/hud/TouchPad.js"></script>
+
+    <script src="js/prefabs/units/ConfirmButton.js"></script>
+    <script src="js/prefabs/units/GameText.js"></script>
+    <script src="js/prefabs/units/Hero.js"></script>
+    <script src="js/prefabs/units/GameTimer.js"></script>
+    <script src="js/prefabs/units/GameMeter.js"></script>
+
+    <script src="js/main.js"></script>
+    <!--endbuild-->
+    <!--</Deject>-->
+
+</body>
+</html>
