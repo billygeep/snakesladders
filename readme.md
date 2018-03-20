@@ -2,5 +2,7 @@
 
 ## Your basic phaser template
 
-##### 'gulp watch' or 'gulp build'
+##### Install dependencies with npm install
+
+##### call 'gulp watch' or 'gulp build'
 

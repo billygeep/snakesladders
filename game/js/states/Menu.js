@@ -61,6 +61,5 @@ Menu.prototype = {
 
   startGame: function () {  
   	 game.state.start("Game");
-     alert('START GAME ' + (this.currentgame+1))
   }
 };
