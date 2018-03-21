@@ -8,12 +8,11 @@ Boot.prototype = {
     //this.game.load.audio('introtheme', [base_path+'assets/audio/introtheme.mp3',base_path+'assets/audio/introtheme.ogg']);
     this.game.load.audioSprite('sfx', [base_path+'assets/audio/audiosprite.mp3', base_path+'assets/audio/audiosprite.ogg'], null, audioJSON);
     this.game.load.atlasJSONHash('furniture_sprites', base_path+'assets/images/furniture_sprites.png', base_path+'assets/images/furniture_sprites.json');
-
+    this.game.load.atlasJSONHash('spritesheets', base_path+'assets/images/spritesheets.png', base_path+'assets/images/spritesheets.json');
   },
 
   loadImages: function () {
-    game.load.image('speed_meter', base_path+'assets/images/speed_meter.png');
-    game.load.image('speed_needle', base_path+'assets/images/speed_needle.png');
+    
   },
 
   init: function () {

@@ -2,7 +2,7 @@
 //create the graphical hero
 var Hero = function (_game, _x, _y) {
   // call Phaser.Sprite constructor
-  Phaser.Sprite.call(this, _game, _x, _y, 'furniture_sprites', 'speech_bubble_tr_orange.png');
+  Phaser.Sprite.call(this, _game, _x, _y, 'furniture_sprites', 'quit_button.png');
 
   // this.animations.add('stop', ["lincolnstop/0010", "lincolnstop/0010", "lincolnstop/0010", "lincolnstop/0010", "lincolnstop/0010", "lincolnstop/0010", "lincolnstop/0010", "lincolnstop/0010", "lincolnstop/0010", "lincolnstop/0010", "lincolnstop/0010", "lincolnstop/0001", "lincolnstop/0002", "lincolnstop/0003", "lincolnstop/0004", "lincolnstop/0005", "lincolnstop/0006", "lincolnstop/0007", "lincolnstop/0008", "lincolnstop/0009"], 10, true, false);
   // this.animations.add('crawlstop', ["lincolncrawlfront/0001"], 10, true, false);
@@ -18,8 +18,7 @@ var Hero = function (_game, _x, _y) {
   // this.animations.add('stopdark', ["lincolnstopdark/0001"], 10, true, false);
 
   this.anchor.setTo(0.5, 1);
-  game.physics.arcade.enable(this);
-
+  
   this.getAnimationName = function () {
 
     var name = 'stop'; // default animation

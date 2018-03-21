@@ -6,16 +6,17 @@ var Game = function(game) {};
 var gameview
 
 
-var gameScene, wallSprite_01, wallSprite_02, ladder_01, snake_01, wallSprite_03, wall_x = 0;
+var gameScene, wallSprite_01, wallSprite_02, coin, snake_01, wallSprite_03, wall_x = 0;
 
 var current_floor = 0;
 var range = 4;
 var jump = false;
 var drop = false;
 var floor_transition = 0;
-var start_y = 300;
 
-var wall_width = 168, wall_height = 89;
+var speedX = 2;
+
+var wall_width = 360, wall_height = 120;
 
 var wall_array = [
   [ 0, 0, 0, 0, 0, 0, 0, 0 ],
@@ -34,29 +35,15 @@ var wall_array = [
   [ 1, 2, 1, 1, 1, 2, 2, 2 ]
 ]
 
-var object_array = [
-  [ 0, 0, 1, 0, 0, 0, 0, 0 ],
-  [ 0, 1, 0, 2, 0, 0, 0, 0 ],
-  [ 0, 0, 1, 0, 0, 0, 0, 0 ],
-  [ 0, 0, 0, 1, 0, 2, 0, 0 ],
-  [ 0, 0, 0, 0, 0, 0, 0, 0 ],
-  [ 0, 0, 0, 0, 0, 0, 0, 0 ],
-  [ 0, 0, 0, 0, 0, 0, 0, 0 ],
-  [ 0, 0, 0, 0, 0, 0, 0, 0 ],
-  [ 0, 0, 0, 0, 0, 0, 0, 0 ],
-  [ 0, 0, 0, 0, 0, 0, 0, 0 ],
-  [ 0, 0, 0, 0, 2, 0, 0, 0 ],
-  [ 0, 1, 0, 0, 0, 0, 0, 0 ],
-  [ 0, 0, 2, 0, 0, 1, 0, 0 ],
-  [ 0, 1, 0, 0, 0, 0, 0, 0 ]
-]
-
+var object_array = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
 
 
 Game.prototype = {
 
   init: function () {
     gameview = this;
+
+    this.cursors = this.game.input.keyboard.createCursorKeys();
 
     this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
     this.upKey.onDown.add(this.jumpFloor, this);
@@ -77,25 +64,37 @@ Game.prototype = {
     // create groups
     this.groups = {};
 
+    this.start_y = game.world.height - 89;
+
     var groups = ["background",
-        "sprites"
+        "sprites",
+        "coins",
+        "player"
     ]
     groups.forEach(function (group_name) {
         this.groups[group_name] = this.game.add.group();
     }, this);
 
+    this.game.physics.startSystem(Phaser.Physics.ARCADE);
+
     gameScene = game.add.renderTexture(game.width,game.height);
     game.add.sprite(0, 0, gameScene);
+   // this.groups.background.add(gameScene)
 
-    wallSprite_01 = game.make.sprite(0, 0, 'furniture_sprites', 'start_button.png');
-    wallSprite_02 = game.make.sprite(0, 0, 'furniture_sprites', 'quit_button.png');
-    wallSprite_03 = game.make.sprite(0, 0, 'furniture_sprites', 'quit_button_over.png');
+    wallSprite_01 = game.make.sprite(0, 0, 'spritesheets', 'walls/wall_01.jpg');
+    wallSprite_02 = game.make.sprite(0, 0, 'spritesheets', 'walls/wall_02.jpg');
+    wallSprite_03 = game.make.sprite(0, 0, 'spritesheets', 'walls/wall_03.jpg');
 
-    ladder_01 = game.make.sprite(0, 0, 'furniture_sprites', 'close_up.png');
-    snake_01 = game.make.sprite(0, 0, 'furniture_sprites', 'close_over.png');
+    coin = new Coin(game, 0, 0);
 
     this.createLevels();
     this.createHero();
+    //this.createObject(10);
+
+    this.game.world.bringToTop(this.groups.coins);
+    this.game.world.bringToTop(this.groups.player);
+    this.groups.coins.enableBody = true;
+
   },
 
   ///////////////////////////////////
@@ -107,11 +106,28 @@ Game.prototype = {
   ///////////////////////////////////
   
   createLevels: function () {
+    this.ground = this.add.tileSprite(0,this.game.world.height - 89,this.game.world.width,89,'furniture_sprites', 'start_button.png');
+    this.game.physics.arcade.enable(this.ground);
+    this.ground.body.immovable = true;
+    this.ground.body.allowGravity = false;
+  },
 
+  createObject: function (_length) {
+    for (var i = 0; i < _length; i++) {
+
+      let ran = Math.floor(Math.random()*4)
+
+      let coin = new Coin(game, 1200 - (i*100), this.start_y - (ran*wall_height));
+      this.groups.coins.add(coin);
+    }
   },
 
   createHero: function () {
-     this.hero = new Hero(game, 0, 0);
+     this.hero = new Hero(game, 300, 20);
+     this.groups.player.add(this.hero)
+     this.game.camera.follow(this.hero);
+     this.game.physics.arcade.enable(this.hero);
+     this.hero.body.gravity.y = 800;
   },
 
   ////////////////////////////////////
@@ -130,19 +146,33 @@ Game.prototype = {
     drop = true;
   },
 
+  heroJump: function() {
+    
+    if(this.hero.body.touching.down) {
+      console.log('GO')
+      this.hero.body.velocity.y = 700;
+    }  
+  },
+
   update: function () {
     this.renderScene();
-    if (jump) this.transitionFloor(2);
-    if (drop) this.transitionFloor(-2);
+    //if (jump) this.transitionFloor(2);
+   // if (drop) this.transitionFloor(-2);
+   // this.moveObjects();
 
+    this.game.physics.arcade.collide(this.hero, this.ground, this.heroHit, null, this);
+
+    if (this.cursors.up.isDown) {
+      this.heroJump();
+    }
   },
 
   renderScene: function () {
 
     gameScene.clear();
 
-    wall_x -= 4;
-    wall_y = start_y + (current_floor*wall_height) + floor_transition
+    wall_x -= speedX;
+    wall_y = this.start_y //+ (current_floor*wall_height) + floor_transition
 
     var shift_element = false;
 
@@ -151,17 +181,22 @@ Game.prototype = {
     }
 
     for (var i = current_floor; i < current_floor+range; i++) {
+
+
+
       for (var j = 0; j < wall_array[i].length; j++) {
         var tile = this.getTile(wall_array[i][j])
         this.drawTile(tile, j, i);
-        if(object_array[i][j] > 0) {  
-          var object = this.getObject(object_array[i][j]);
-          this.drawObject(object, j, i);
-        }
+        // if(object_array[i][j] > 0) {  
+        //   var object = this.getObject(object_array[i][j]);
+        //   this.drawObject(object, j, i);
+        // }
       }
+      var object = this.getObject(object_array[i]);
+      this.drawObject(object, j, i);
     }
 
-    this.drawHero();
+    //this.drawHero();
 
     if (shift_element) {
       wall_x = 0;
@@ -169,8 +204,8 @@ Game.prototype = {
         wall_array[k].shift();
         wall_array[k].push(this.getNewTile(k));
 
-        object_array[k].shift();
-        object_array[k].push(this.getNewTile(k));
+        // object_array[k].shift();
+        // object_array[k].push(this.getNewTile(k));
       }
     }  
   },
@@ -191,7 +226,7 @@ Game.prototype = {
   },
 
   drawHero: function() {
-    gameScene.renderXY(this.hero, 300, start_y+50, false);
+    gameScene.renderXY(this.hero, 300, this.start_y, false);
   },
 
   drawTile: function(tile, x, y) {
@@ -199,16 +234,24 @@ Game.prototype = {
   },
 
   drawObject: function(object, x, y) {
-
     var myX = (x*wall_width)+wall_x;
     var myY = wall_y - (y*wall_height);
 
     gameScene.renderXY(object, myX, myY, false);
-    
-    if (this.hero.getBounds().contains(myX, myY)) {
-    //   console.log('GO')
-    console.log('GO')
-    }
+  },
+
+  moveObjects: function () {
+
+    var me = this;
+
+    this.groups.coins.forEach(function (coin){
+      coin.position.x -= speedX;
+
+      if (coin.position.x < -50) {
+        coin.destroy();
+        me.createObject(1)
+      }
+    })
   },
 
   getTile: function (_tile) {
@@ -236,7 +279,7 @@ Game.prototype = {
 
     switch (_object) {
       case 0 :
-     
+        object = coin
       break;
       case 1 :
         object = ladder_01;
@@ -255,8 +298,7 @@ Game.prototype = {
   },
 
   render: function () {
-
+    this.game.debug.text(game.time.fps || '--', 2, 14, "#00ff00");
   },
 }
-
 
