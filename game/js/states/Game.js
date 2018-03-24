@@ -6,15 +6,16 @@ var Game = function(game) {};
 var gameview
 
 
-var gameScene, wallSprite_01, wallSprite_02, coin, snake_01, wallSprite_03, wall_x = 0;
+var wallSprite_01, wallSprite_02, wallSprite_03, coin, snake_01, wall_x = 0;
 
-var current_floor = 0;
+var current_floor = 1;
 var range = 4;
 var jump = false;
 var drop = false;
 var floor_transition = 0;
 
 var speedX = 2;
+var speed_increment = 0.1;
 
 var wall_width = 360, wall_height = 120;
 
@@ -48,6 +49,10 @@ Game.prototype = {
     this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
     this.upKey.onDown.add(this.jumpFloor, this);
 
+    this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    this.spaceKey.onDown.add(this.heroJump, this);
+    //this.upKey.onUp.add(this.stopJump, this);
+
     this.downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
     this.downKey.onDown.add(this.dropFloor, this);    
   },
@@ -61,15 +66,20 @@ Game.prototype = {
   ////////////////////////////////////
 
   create: function () {
+
+    //this.game.world.setBounds(0, 0, 3600, this.game.height);
     // create groups
     this.groups = {};
 
+    this.gameScene;
     this.start_y = game.world.height - 89;
+    this.playing = false;
 
-    var groups = ["background",
+    var groups = ["floors",
         "sprites",
         "coins",
-        "player"
+        "player",
+        "hud"
     ]
     groups.forEach(function (group_name) {
         this.groups[group_name] = this.game.add.group();
@@ -77,8 +87,8 @@ Game.prototype = {
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    gameScene = game.add.renderTexture(game.width,game.height);
-    game.add.sprite(0, 0, gameScene);
+    this.gameScene = game.add.renderTexture(game.width,game.height);
+    game.add.sprite(0, 0, this.gameScene);
    // this.groups.background.add(gameScene)
 
     wallSprite_01 = game.make.sprite(0, 0, 'spritesheets', 'walls/wall_01.jpg');
@@ -89,12 +99,15 @@ Game.prototype = {
 
     this.createLevels();
     this.createHero();
+    this.createHud();
     //this.createObject(10);
 
     this.game.world.bringToTop(this.groups.coins);
     this.game.world.bringToTop(this.groups.player);
+    this.game.world.bringToTop(this.groups.hud);
     this.groups.coins.enableBody = true;
 
+    this.playing = true;
   },
 
   ///////////////////////////////////
@@ -106,10 +119,16 @@ Game.prototype = {
   ///////////////////////////////////
   
   createLevels: function () {
-    this.ground = this.add.tileSprite(0,this.game.world.height - 89,this.game.world.width,89,'furniture_sprites', 'start_button.png');
+    this.ground = this.add.tileSprite(0, 360, this.game.world.width,120, 'spritesheets', 'walls/wall_01.jpg');
     this.game.physics.arcade.enable(this.ground);
     this.ground.body.immovable = true;
     this.ground.body.allowGravity = false;
+    this.ground.alpha = 0;
+
+    for (var i = 0; i < 6; i++) {
+      var floor = new FloorSection(game, 0,  i*120);
+      this.groups.floors.add(floor);
+    }
   },
 
   createObject: function (_length) {
@@ -125,9 +144,14 @@ Game.prototype = {
   createHero: function () {
      this.hero = new Hero(game, 300, 20);
      this.groups.player.add(this.hero)
-     this.game.camera.follow(this.hero);
+     //this.game.camera.follow(this.hero);
      this.game.physics.arcade.enable(this.hero);
      this.hero.body.gravity.y = 800;
+  },
+
+  createHud: function () { 
+    this.floordisplay = new GameText(game, 50, 50, 1, style.titlestyle, 0.5, 0.5);
+    this.groups.hud.add(this.floordisplay)
   },
 
   ////////////////////////////////////
@@ -141,87 +165,106 @@ Game.prototype = {
   jumpFloor: function () {
     jump = true;
   },
+  stopJump: function () {
+    jump = false;
+  },
 
   dropFloor: function () {
-    drop = true;
+    if (current_floor > 1)  drop = true;
   },
 
   heroJump: function() {
-    
     if(this.hero.body.touching.down) {
-      console.log('GO')
-      this.hero.body.velocity.y = 700;
+      this.hero.body.velocity.y = -350;
     }  
   },
 
   update: function () {
+
     this.renderScene();
-    //if (jump) this.transitionFloor(2);
-   // if (drop) this.transitionFloor(-2);
+    
+    if (jump) this.transitionFloor(2);
+    if (drop) this.transitionFloor(-2);
    // this.moveObjects();
 
     this.game.physics.arcade.collide(this.hero, this.ground, this.heroHit, null, this);
 
-    if (this.cursors.up.isDown) {
-      this.heroJump();
-    }
+    // if (this.cursors.right.isDown) {
+    //   this.hero.body.velocity.x = 300;
+    // } else {
+    //   this.hero.body.velocity.x = 0;
+    // }
   },
 
   renderScene: function () {
 
-    gameScene.clear();
+    if (this.playing) {
+      this.gameScene.clear();
 
-    wall_x -= speedX;
-    wall_y = this.start_y //+ (current_floor*wall_height) + floor_transition
+      wall_x -= speedX;
+      wall_y = this.start_y //+ (current_floor*wall_height) + floor_transition
 
-    var shift_element = false;
+      var shift_element = false;
 
-    if (wall_x <= -wallSprite_01.width) {
-      shift_element = true;
-    }
-
-    for (var i = current_floor; i < current_floor+range; i++) {
-
-
-
-      for (var j = 0; j < wall_array[i].length; j++) {
-        var tile = this.getTile(wall_array[i][j])
-        this.drawTile(tile, j, i);
-        // if(object_array[i][j] > 0) {  
-        //   var object = this.getObject(object_array[i][j]);
-        //   this.drawObject(object, j, i);
-        // }
+      if (wall_x <= -wallSprite_01.width) {
+        shift_element = true;
+        wall_x = 0;
       }
-      var object = this.getObject(object_array[i]);
-      this.drawObject(object, j, i);
+
+      var me = this;
+
+      this.groups.floors.forEach(function(item) {
+        item.updateFloors(shift_element, floor_transition);
+      });
     }
+
+    //   for (var j = 0; j < wall_array[i].length; j++) {
+    //     var tile = this.getTile(wall_array[i][j])
+    //     this.drawTile(tile, j, i);
+    //     // if(object_array[i][j] > 0) {  
+    //     //   var object = this.getObject(object_array[i][j]);
+    //     //   this.drawObject(object, j, i);
+    //     // }
+    //   }
+    //   var object = this.getObject(object_array[i]);
+    //   this.drawObject(object, j, i);
+    // }
 
     //this.drawHero();
 
-    if (shift_element) {
-      wall_x = 0;
-      for (var k = current_floor; k < current_floor+range; k++) {
-        wall_array[k].shift();
-        wall_array[k].push(this.getNewTile(k));
+    // if (shift_element) {
+    //   wall_x = 0;
+    //   for (var k = current_floor; k < current_floor+range; k++) {
+    //     wall_array[k].shift();
+    //     wall_array[k].push(this.getNewTile(k));
 
-        // object_array[k].shift();
-        // object_array[k].push(this.getNewTile(k));
-      }
-    }  
+    //     // object_array[k].shift();
+    //     // object_array[k].push(this.getNewTile(k));
+    //   }
+    // }  
   },
 
   transitionFloor: function (_val) {
+
     floor_transition += _val;
 
     if (floor_transition >= wall_height) {
       current_floor++;
       floor_transition = 0;
       jump = false;
+      speedX += speed_increment;
+
+      //console.log('gh')
+      this.floordisplay.newText(current_floor);
     }
     if (floor_transition <= -wall_height) {
       current_floor--;
       floor_transition = 0;
       drop = false;
+      speedX -= speed_increment;
+
+
+      this.floordisplay.newText(current_floor);
     }
   },
 
@@ -229,8 +272,9 @@ Game.prototype = {
     gameScene.renderXY(this.hero, 300, this.start_y, false);
   },
 
-  drawTile: function(tile, x, y) {
-    gameScene.renderXY(tile, (x*wall_width)+wall_x, wall_y - (y*wall_height), false);
+  drawTile: function(_t, _x, _y) {
+    var tile = this.getTile(_t);
+    this.gameScene.renderXY(tile, (_x*wall_width)+wall_x, _y, false);
   },
 
   drawObject: function(object, x, y) {
@@ -259,13 +303,13 @@ Game.prototype = {
     var tile;
 
     switch (_tile) {
-      case 0 :
+      case 1 :
         tile = wallSprite_01;
       break;
-      case 1 :
+      case 2 :
         tile = wallSprite_02;
       break;
-      case 2 :
+      case 3 :
         tile = wallSprite_03;
       break;
     }

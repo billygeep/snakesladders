@@ -66,7 +66,7 @@ Boot.prototype = {
     this.addGameStates();
     if (!gameoptions.audioloaded) gameaudio = new AudioManager(this);
 
-    game.state.start("Menu");
+    game.state.start("Game");
   }
 
 };
