@@ -45,7 +45,7 @@ FloorSection.prototype.newTiles = function(_level) {
 
 	this.arr = [];
 
-	var l = Math.ceil(game.width/gameview.wall_width) + 1
+	var l = 1800/320
 
 	for (var i = 0; i < l; i++) {
   		this.arr.push(this.getTile());

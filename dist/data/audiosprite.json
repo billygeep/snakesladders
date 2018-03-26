@@ -1,0 +1,189 @@
+{
+  "spritemap": {
+    "actionzone_sfx": {
+      "start": 0,
+      "end": 0.156735
+    },
+    "airpop_sfx": {
+      "start": 0.348685,
+      "end": 0.661315
+    },
+    "back_sfx": {
+      "start": 0.911315,
+      "end": 1.076939
+    },
+    "balloon_sfx": {
+      "start": 1.326939,
+      "end": 1.941837
+    },
+    "bonusitem_sfx": {
+      "start": 2.191837,
+      "end": 6.752698
+    },
+    "bubblepop_sfx": {
+      "start": 7.002698,
+      "end": 7.34898
+    },
+    "button_sfx": {
+      "start": 7.59898,
+      "end": 8.283605
+    },
+    "buzzfail_sfx": {
+      "start": 8.533605,
+      "end": 10.049388
+    },
+    "catmeow_sfx": {
+      "start": 10.299388,
+      "end": 11.997347
+    },
+    "cauldron_sfx": {
+      "start": 12.247347,
+      "end": 16.759388
+    },
+    "cauldrondrag_sfx": {
+      "start": 17.009388,
+      "end": 22.421361
+    },
+    "cellphoneringing_sfx": {
+      "start": 22.671361,
+      "end": 27.768141
+    },
+    "charger_sfx": {
+      "start": 28.018141,
+      "end": 28.437732
+    },
+    "clickbutton_sfx": {
+      "start": 28.687732,
+      "end": 28.812744
+    },
+    "clock_sfx": {
+      "start": 29.062744,
+      "end": 29.525692
+    },
+    "clockalarm_sfx": {
+      "start": 29.775692,
+      "end": 32.805896
+    },
+    "closet_sfx": {
+      "start": 33.055896,
+      "end": 33.567891
+    },
+    "collect_sfx": {
+      "start": 33.817891,
+      "end": 35.417891
+    },
+    "curtain_sfx": {
+      "start": 35.667891,
+      "end": 36.501247
+    },
+    "dialogue_sfx": {
+      "start": 36.751247,
+      "end": 36.996077
+    },
+    "drawer_sfx": {
+      "start": 37.246077,
+      "end": 38.163401
+    },
+    "fishtank_sfx": {
+      "start": 38.413401,
+      "end": 40.641066
+    },
+    "fridge_sfx": {
+      "start": 40.891066,
+      "end": 41.664898
+    },
+    "frontdoor_sfx": {
+      "start": 41.914898,
+      "end": 42.832222
+    },
+    "furnacedoor_sfx": {
+      "start": 43.082222,
+      "end": 44.08746
+    },
+    "glassbreaking_sfx": {
+      "start": 44.33746,
+      "end": 47.837868
+    },
+    "grapes_sfx": {
+      "start": 48.087868,
+      "end": 48.968866
+    },
+    "hamster_sfx": {
+      "start": 49.218866,
+      "end": 50.471224
+    },
+    "inventoryexpand_sfx": {
+      "start": 50.721224,
+      "end": 50.971224
+    },
+    "lightswitch_sfx": {
+      "start": 51.221224,
+      "end": 51.641791
+    },
+    "microwave_sfx": {
+      "start": 51.891791,
+      "end": 58.321814
+    },
+    "musicbox_sfx": {
+      "start": 58.571814,
+      "end": 69.693537
+    },
+    "nature_sfx": {
+      "start": 69.943537,
+      "end": 72.008662
+    },
+    "newtask_sfx": {
+      "start": 72.258662,
+      "end": 74.749229
+    },
+    "pahping_sfx": {
+      "start": 74.999229,
+      "end": 76.251587
+    },
+    "squeakytoy_sfx": {
+      "start": 76.501587,
+      "end": 77.514014
+    },
+    "stackpaper_sfx": {
+      "start": 77.764014,
+      "end": 78.00288
+    },
+    "takephoto_sfx": {
+      "start": 78.25288,
+      "end": 79.505238
+    },
+    "taskcomplete_sfx": {
+      "start": 79.755238,
+      "end": 80.949184
+    },
+    "trumpet_sfx": {
+      "start": 81.199184,
+      "end": 83.17288
+    },
+    "valve_sfx": {
+      "start": 83.42288,
+      "end": 86.175805
+    },
+    "walkietalkie_sfx": {
+      "start": 86.425805,
+      "end": 86.880249
+    },
+    "whoopee_sfx": {
+      "start": 87.130249,
+      "end": 87.942948
+    },
+    "winsound_sfx": {
+      "start": 88.192948,
+      "end": 91.917075
+    },
+    "wrongitem_sfx": {
+      "start": 92.167075,
+      "end": 92.479705
+    }
+  },
+  "resources": [
+    "audiosprite.wav",
+    "audiosprite.ogg",
+    "audiosprite.mp3"
+  ]
+}

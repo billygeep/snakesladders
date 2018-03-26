@@ -16,6 +16,8 @@ var floor_transition = 0;
 var speedX = 2;
 var speed_increment = 0.1;
 
+var floor_array = [ 1, 2, 3, 1, 2, 3, 1, 2, 3 ]
+
 Game.prototype = {
 
   init: function () {
@@ -47,13 +49,14 @@ Game.prototype = {
 
   create: function () {
 
-    //this.game.world.setBounds(0, 0, 3600, this.game.height);
+   // this.game.world.setBounds(0, 0, 1600, this.game.height);
     // create groups
     this.groups = {};
 
     this.gameScene;
     this.start_y = game.world.height - 89;
     this.playing = false;
+    this.wrapping = false;
 
     //movement
     this.allowXmovement = true;
@@ -122,10 +125,16 @@ Game.prototype = {
 
     var l = Math.ceil(game.height/this.wall_height) + 2
 
-    for (var i = 0; i < l; i++) {
-      var floor = new FloorSection(game, 0,  i*120);
-      this.groups.floors.add(floor);
-    }
+    this.floor = this.add.tileSprite(0,0,this.game.world.width,600, 'spritesheets', 'wall.jpg');
+    this.floor.starty = 0
+    //this.floor.anchor.setTo(0,1)
+    // for (var i = 0; i < l; i++) {
+    //   var floor = this.floor = this.add.tileSprite(0,480 - (i*120),this.game.world.width,120 , 'spritesheets', 'walls/wall_0'+(i+1)+'.jpg');
+    //   this.groups.floors.add(floor);
+    //   floor.starty = i*480 - (i*120)
+    // }
+    //new FloorSection(game, 0,  i*120);
+    //this.floor = this.add.tileSprite(0,this.game.height-70,this.game.world.width,70, 'spritesheets', 'walls/wall_01.jpg');
   },
 
   createObjects: function () {
@@ -136,7 +145,7 @@ Game.prototype = {
   createHero: function () {
      this.hero = new Hero(game, (game.width/2), 20);
      this.groups.player.add(this.hero)
-     //this.game.camera.follow(this.hero);
+     this.game.camera.follow(this.hero);
      this.game.physics.arcade.enable(this.hero);
      this.hero.body.gravity.y = 800;
   },
@@ -173,12 +182,39 @@ Game.prototype = {
 
   update: function () {
 
-    this.renderScene();
-    this.renderObjects();
+   // this.renderScene();
+   this.renderObjects();
     
     if (jump) this.transitionFloor(2);
     if (drop) this.transitionFloor(-2);
    // this.moveObjects();
+
+   // this.hero.body.velocity.x = 250;
+
+   this.floor.tilePosition.x -= 5;
+   this.floor.tilePosition.y = this.floor.starty + floor_transition;
+    // this.groups.floors.forEach(function(item) {
+    //   item.tilePosition.x -= 5;
+    //   item.tilePosition.y = item.starty + floor_transition;
+    // });
+
+    // if(!this.wrapping && this.hero.x < this.game.width) {
+    //   //Not used yet, but may be useful to know how many times we've wrapped
+    //   this.wraps++;
+    //   //We only want to destroy and regenerate once per wrap, so we test with wrapping var
+    //   this.wrapping = true;
+    //   // this.fleas.destroy();
+    //   // this.generateFleas();
+    //   // this.mounds.destroy();
+    //   // this.generateMounds();
+      
+    //   //put everything back in the proper order
+    //   // this.game.world.bringToTop(this.grass);
+    //   // this.game.world.bringToTop(this.mounds);
+    //   // this.game.world.bringToTop(this.ground);
+    // } else if (this.hero.x >= this.game.width) {
+    //   this.wrapping = false;
+    // }
 
     this.game.physics.arcade.collide(this.hero, this.ground, this.heroHit, null, this);
 
@@ -187,6 +223,8 @@ Game.prototype = {
     // } else {
     //   this.hero.body.velocity.x = 0;
     // }
+
+    //this.game.world.wrap(this.hero, -(this.game.width/2), false, true, false);
   },
 
   // control the objects
@@ -197,7 +235,7 @@ Game.prototype = {
     if (!me.allowXmovement) delta = 0;
     //move each object
     this.groups.objects.forEach(function(object) {
-      object.body.velocity.x = -delta
+      object.position.x -= 5
       //object.position.x -= speedX;
       object.position.y = object.startY + floor_transition;
       if (object.position.x < -object.width) {
@@ -250,23 +288,23 @@ Game.prototype = {
   renderScene: function () {
 
     if (this.playing) {
-      this.gameScene.clear();
+      // this.gameScene.clear();
 
-      if (this.allowXmovement) wall_x -= speedX;
-      wall_y = this.start_y //+ (current_floor*this.wall_height) + floor_transition
+      // if (this.allowXmovement) wall_x -= speedX;
+      // wall_y = this.start_y //+ (current_floor*this.wall_height) + floor_transition
 
-      var shift_element = false;
+      // var shift_element = false;
 
-      if (wall_x <= -wallSprite_01.width) {
-        shift_element = true;
-        wall_x = 0;
-      }
+      // if (wall_x <= -wallSprite_01.width) {
+      //   shift_element = true;
+      //   wall_x = 0;
+      // }
 
-      var me = this;
+      // var me = this;
 
-      this.groups.floors.forEach(function(item) {
-        item.updateFloors(shift_element, floor_transition);
-      });
+      // this.groups.floors.forEach(function(item) {
+      //   item.updateFloors(shift_element, floor_transition);
+      // });
     }
 
     //   for (var j = 0; j < wall_array[i].length; j++) {
@@ -290,6 +328,7 @@ Game.prototype = {
     this.allowXmovement = false;
 
     if (floor_transition >= this.wall_height) {
+      this.floor.starty += 120
       this.updateObjectPosition();
       current_floor++;
       floor_transition = 0;
@@ -304,6 +343,7 @@ Game.prototype = {
       floor_transition = 0;
       drop = false;
       speedX -= speed_increment;
+      this.floor.starty -= 120
       this.allowXmovement = true;
       this.floordisplay.newText(current_floor);
     }
