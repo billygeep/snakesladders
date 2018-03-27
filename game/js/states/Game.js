@@ -14,7 +14,7 @@ var drop = false;
 var floor_transition = 0;
 
 var speedX = 2;
-var speed_increment = 0.1;
+
 
 var floor_array = [ 1, 2, 3, 1, 2, 3, 1, 2, 3 ]
 
@@ -22,14 +22,16 @@ Game.prototype = {
 
   init: function () {
 
-    game.renderer.renderSession.roundPixels = true;
+  //  game.renderer.renderSession.roundPixels = true;
+    this.game.renderer.renderSession.roundPixels = true;
+
 
     gameview = this;
 
     this.cursors = this.game.input.keyboard.createCursorKeys();
 
-    this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-    this.upKey.onDown.add(this.jumpFloor, this);
+    // this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+    // this.upKey.onDown.add(this.jumpFloor, this);
 
     this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     this.spaceKey.onDown.add(this.heroJump, this);
@@ -58,8 +60,12 @@ Game.prototype = {
     this.playing = false;
     this.wrapping = false;
 
+
     //movement
     this.allowXmovement = true;
+    this.speedX = 2;
+    this.speed_increment = 1;
+    this.addition_speed = 0;
 
     //object vars
     this.object_delay = 80;
@@ -117,29 +123,25 @@ Game.prototype = {
   ///////////////////////////////////
   
   createLevels: function () {
-    this.ground = this.add.tileSprite(0, 480, this.game.world.width,120, 'spritesheets', 'walls/wall_01.jpg');
+    this.ground = this.add.sprite(0, 480, 'spritesheets', 'walls/wall_01.jpg');
+    this.width = this.game.width;
     this.game.physics.arcade.enable(this.ground);
     this.ground.body.immovable = true;
     this.ground.body.allowGravity = false;
     this.ground.alpha = 0;
 
-    var l = Math.ceil(game.height/this.wall_height) + 2
+    var tex = game.add.renderTexture(320, 840, 'bg', true);
 
-    this.floor = this.add.tileSprite(0,0,this.game.world.width,600, 'spritesheets', 'wall.jpg');
-    this.floor.starty = 0
-    //this.floor.anchor.setTo(0,1)
-    // for (var i = 0; i < l; i++) {
-    //   var floor = this.floor = this.add.tileSprite(0,480 - (i*120),this.game.world.width,120 , 'spritesheets', 'walls/wall_0'+(i+1)+'.jpg');
-    //   this.groups.floors.add(floor);
-    //   floor.starty = i*480 - (i*120)
-    // }
-    //new FloorSection(game, 0,  i*120);
-    //this.floor = this.add.tileSprite(0,this.game.height-70,this.game.world.width,70, 'spritesheets', 'walls/wall_01.jpg');
-  },
+    for (var i = 0; i < 7; i++) {
+      var img = game.make.image(0, 0, 'spritesheets', 'walls/wall_0'+(i+1)+'.jpg');
+      tex.renderXY(img, 0, i*120, false);
+    }
 
-  createObjects: function () {
-    this.objects = new FloorObjects(game, 0, 0);
-    this.groups['objects'] = this.objects;
+    this.floor = this.add.tileSprite(0,0,this.game.world.width,this.game.height,tex);
+    this.floor.starty = 0;
+    this.floor.inputEnabled = true;
+    this.floor.input.useHandCursor = true;
+    this.floor.events.onInputDown.add(this.heroJump, this);
   },
 
   createHero: function () {
@@ -181,62 +183,39 @@ Game.prototype = {
   },
 
   update: function () {
-
-   // this.renderScene();
-   this.renderObjects();
-    
+ 
     if (jump) this.transitionFloor(2);
     if (drop) this.transitionFloor(-2);
-   // this.moveObjects();
 
-   // this.hero.body.velocity.x = 250;
+    if (this.playing) {
+      this.renderScene();
+      this.renderObjects();
+    }
 
-   this.floor.tilePosition.x -= 5;
-   this.floor.tilePosition.y = this.floor.starty + floor_transition;
-    // this.groups.floors.forEach(function(item) {
-    //   item.tilePosition.x -= 5;
-    //   item.tilePosition.y = item.starty + floor_transition;
-    // });
+    this.checkCollisions();
+  },
 
-    // if(!this.wrapping && this.hero.x < this.game.width) {
-    //   //Not used yet, but may be useful to know how many times we've wrapped
-    //   this.wraps++;
-    //   //We only want to destroy and regenerate once per wrap, so we test with wrapping var
-    //   this.wrapping = true;
-    //   // this.fleas.destroy();
-    //   // this.generateFleas();
-    //   // this.mounds.destroy();
-    //   // this.generateMounds();
-      
-    //   //put everything back in the proper order
-    //   // this.game.world.bringToTop(this.grass);
-    //   // this.game.world.bringToTop(this.mounds);
-    //   // this.game.world.bringToTop(this.ground);
-    // } else if (this.hero.x >= this.game.width) {
-    //   this.wrapping = false;
-    // }
-
+  checkCollisions: function() {
     this.game.physics.arcade.collide(this.hero, this.ground, this.heroHit, null, this);
 
-    // if (this.cursors.right.isDown) {
-    //   this.hero.body.velocity.x = 300;
-    // } else {
-    //   this.hero.body.velocity.x = 0;
-    // }
+    this.game.physics.arcade.collide(this.hero, this.groups.objects, this.hitObject, null, this);
+  },
 
-    //this.game.world.wrap(this.hero, -(this.game.width/2), false, true, false);
+  hitObject: function (_hero, _obj) {
+    if (_obj.name === 'ladder') {
+      this.jumpFloor();
+      _obj.name = 'ladder_complete';
+    }
   },
 
   // control the objects
   renderObjects: function () {
 
     var me = this;
-    var delta = (this.game.time.fps*speedX);
-    if (!me.allowXmovement) delta = 0;
+
     //move each object
     this.groups.objects.forEach(function(object) {
-      object.position.x -= 5
-      //object.position.x -= speedX;
+      if (me.allowXmovement) object.position.x -= me.speedX
       object.position.y = object.startY + floor_transition;
       if (object.position.x < -object.width) {
         object.destroy();
@@ -244,11 +223,9 @@ Game.prototype = {
     });
 
     if (this.object_counter <= 0) {
-
       this.object_counter = 50 + Math.floor(Math.random()*this.object_delay);
       var floor = this.getUniqueRandomSectionNumber();
       this.createObject(floor);
-
       this.last_floor = floor;
     }
 
@@ -272,8 +249,11 @@ Game.prototype = {
   },
 
   createObject: function(_floor) {
-    var obj = game.add.sprite(game.width + 50, 360 - (_floor*this.wall_height), 'furniture_sprites', 'gates/ladder.png');
-    obj.startY = 360 - (_floor*this.wall_height)
+    var obj = new Coin(game, game.width + 50, 480   - (_floor*this.wall_height)) //game.add.sprite(game.width + 50, 360 - (_floor*this.wall_height), 'furniture_sprites', 'gates/ladder.png');
+    
+    //var obj = new Ladder(game, game.width + 50, 360 - (_floor*this.wall_height)) //game.add.sprite(game.width + 50, 360 - (_floor*this.wall_height), 'furniture_sprites', 'gates/ladder.png');
+    obj.name = 'ladder';
+    obj.startY = 480   - (_floor*this.wall_height)
     this.game.physics.arcade.enable(obj);
 
     this.groups.objects.add(obj)
@@ -286,40 +266,8 @@ Game.prototype = {
   },
 
   renderScene: function () {
-
-    if (this.playing) {
-      // this.gameScene.clear();
-
-      // if (this.allowXmovement) wall_x -= speedX;
-      // wall_y = this.start_y //+ (current_floor*this.wall_height) + floor_transition
-
-      // var shift_element = false;
-
-      // if (wall_x <= -wallSprite_01.width) {
-      //   shift_element = true;
-      //   wall_x = 0;
-      // }
-
-      // var me = this;
-
-      // this.groups.floors.forEach(function(item) {
-      //   item.updateFloors(shift_element, floor_transition);
-      // });
-    }
-
-    //   for (var j = 0; j < wall_array[i].length; j++) {
-    //     var tile = this.getTile(wall_array[i][j])
-    //     this.drawTile(tile, j, i);
-    //     // if(object_array[i][j] > 0) {  
-    //     //   var object = this.getObject(object_array[i][j]);
-    //     //   this.drawObject(object, j, i);
-    //     // }
-    //   }
-    //   var object = this.getObject(object_array[i]);
-    //   this.drawObject(object, j, i);
-    // }
-
-    //this.drawHero();
+    if (this.allowXmovement) this.floor.tilePosition.x -= this.speedX;
+    this.floor.tilePosition.y = this.floor.starty + floor_transition;
   },
 
   transitionFloor: function (_val) {
@@ -333,7 +281,12 @@ Game.prototype = {
       current_floor++;
       floor_transition = 0;
       jump = false;
-      speedX += speed_increment;
+      this.addition_speed += this.speed_increment;
+
+      if (this.addition_speed >= 10) {
+        this.speedX += this.speed_increment;
+        this.addition_speed = 0;
+      }
       this.allowXmovement = true;
       this.floordisplay.newText(current_floor);
     }
@@ -342,57 +295,40 @@ Game.prototype = {
       current_floor--;
       floor_transition = 0;
       drop = false;
-      speedX -= speed_increment;
+      this.addition_speed += this.speed_increment;
+      if (this.addition_speed >= 0) {
+        this.speedX -= this.speed_increment;
+        this.addition_speed = 0;
+      }
       this.floor.starty -= 120
       this.allowXmovement = true;
       this.floordisplay.newText(current_floor);
     }
   },
 
-  drawTile: function(_t, _x, _y) {
-    var tile = this.getTile(_t);
-    this.gameScene.renderXY(tile, (_x*this.wall_width)+wall_x, _y, false);
-  },
-
-  // drawObject: function(object, x, y) {
-  //   var myX = (x*this.wall_width)+wall_x;
-  //   var myY = wall_y - (y*this.wall_height);
-
-  //   gameScene.renderXY(object, myX, myY, false);
+  // drawTile: function(_t, _x, _y) {
+  //   var tile = this.getTile(_t);
+  //   this.gameScene.renderXY(tile, (_x*this.wall_width)+wall_x, _y, false);
   // },
 
-  // moveObjects: function () {
+  // getTile: function (_tile) {
 
-  //   var me = this;
+  //   var tile;
 
-  //   this.groups.coins.forEach(function (coin){
-  //     coin.position.x -= speedX;
+  //   switch (_tile) {
+  //     case 1 :
+  //       tile = wallSprite_01;
+  //     break;
+  //     case 2 :
+  //       tile = wallSprite_02;
+  //     break;
+  //     case 3 :
+  //       tile = wallSprite_03;
+  //     break;
+  //   }
 
-  //     if (coin.position.x < -50) {
-  //       coin.destroy();
-  //       me.createObject(1)
-  //     }
-  //   })
+  //   return tile;
   // },
-
-  getTile: function (_tile) {
-
-    var tile;
-
-    switch (_tile) {
-      case 1 :
-        tile = wallSprite_01;
-      break;
-      case 2 :
-        tile = wallSprite_02;
-      break;
-      case 3 :
-        tile = wallSprite_03;
-      break;
-    }
-
-    return tile;
-  },
 
   getObject: function (_object) {
 
@@ -411,12 +347,6 @@ Game.prototype = {
     }
     return object;
   },
-
-  // get the new background tile
-  // getNewTile: function (_level) {
-  //   var tile = Math.floor(Math.random()*3);
-  //   return tile;
-  // },
 
   render: function () {
     this.game.debug.text(game.time.fps || '--', 2, 14, "#00ff00");

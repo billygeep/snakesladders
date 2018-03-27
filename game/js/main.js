@@ -18,7 +18,7 @@ function loadjscssfile(filename, filetype){
 /* GAME SET UP */
 
 var
-  game = new Phaser.Game(375, 560, Phaser.AUTO, 'game'),
+  game = new Phaser.Game(375, 560, Phaser.CANVAS, 'game'),
   Main = function () {},
   gameoptions = {
     audioloaded: false,
