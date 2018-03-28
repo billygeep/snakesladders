@@ -60,6 +60,7 @@ Game.prototype = {
     this.playing = false;
     this.wrapping = false;
 
+    this.bank = 0;
 
     //movement
     this.allowXmovement = true;
@@ -68,13 +69,15 @@ Game.prototype = {
     this.addition_speed = 0;
 
     //object vars
-    this.object_delay = 80;
+    this.object_delay = 50;
     this.object_counter = this.object_delay;
     this.last_floor = -1;
 
     //walls
     this.wall_width = 320;
     this.wall_height = 120;
+    this.floor_jump = 0;
+    this.jump_speed = 1;
 
     var groups = ["floors",
         "sprites",
@@ -102,7 +105,6 @@ Game.prototype = {
     this.createLevels();
     //this.createObjects();
     this.createHero();
-    
     this.createHud();
     
     //this.game.world.bringToTop(this.groups.coins);
@@ -154,7 +156,10 @@ Game.prototype = {
 
   createHud: function () { 
     this.floordisplay = new GameText(game, 50, 50, 1, style.titlestyle, 0.5, 0.5);
-    this.groups.hud.add(this.floordisplay)
+    this.groups.hud.add(this.floordisplay);
+
+    this.bankstatement = new GameText(game, 270, 50, 1, style.titlestyle, 0.5, 0.5);
+    this.groups.hud.add(this.bankstatement)
   },
 
   ////////////////////////////////////
@@ -183,28 +188,52 @@ Game.prototype = {
   },
 
   update: function () {
- 
-    if (jump) this.transitionFloor(2);
-    if (drop) this.transitionFloor(-2);
 
     if (this.playing) {
+
+      if (jump || drop) this.transitionFloor();
+  
       this.renderScene();
       this.renderObjects();
+      this.checkCollisions();
     }
-
-    this.checkCollisions();
   },
 
   checkCollisions: function() {
     this.game.physics.arcade.collide(this.hero, this.ground, this.heroHit, null, this);
-
     this.game.physics.arcade.collide(this.hero, this.groups.objects, this.hitObject, null, this);
   },
 
   hitObject: function (_hero, _obj) {
-    if (_obj.name === 'ladder') {
-      this.jumpFloor();
-      _obj.name = 'ladder_complete';
+
+    var hero = _hero, obj = _obj, touching = true;
+
+    if (!this.hero.body.touching.down) touching = false;
+
+    if (_obj.name === 'coin') {
+      obj.destroy();
+      this.bank++
+      this.bankstatement.newText(this.bank)
+    } else if (obj.name === 'ladder') {
+      if (hero.position.x >= obj.position.x && hero.position.x <= obj.position.x+10 && touching) {
+        this.floor_jump = 1;
+        this.jump_speed = 2;
+        this.jumpFloor();
+        obj.name = 'ladder_complete';
+      }
+    } else if (obj.name === 'hole') {
+      if (hero.position.x >= obj.position.x && hero.position.x <= obj.position.x+10 && touching) {
+        this.floor_jump = 2;
+        this.jump_speed = 4;
+        this.jumpFloor();
+        hero.visible = false;
+
+        obj.name = 'hole_complete';
+      }
+    } else if (obj.name === 'enemy') {
+      //this.killHero();
+      alert('GAME OVER')
+      obj.name = 'enemy_complete';
     }
   },
 
@@ -223,7 +252,7 @@ Game.prototype = {
     });
 
     if (this.object_counter <= 0) {
-      this.object_counter = 50 + Math.floor(Math.random()*this.object_delay);
+      this.object_counter = 30 + Math.floor(Math.random()*this.object_delay);
       var floor = this.getUniqueRandomSectionNumber();
       this.createObject(floor);
       this.last_floor = floor;
@@ -249,13 +278,26 @@ Game.prototype = {
   },
 
   createObject: function(_floor) {
-    var obj = new Coin(game, game.width + 50, 480   - (_floor*this.wall_height)) //game.add.sprite(game.width + 50, 360 - (_floor*this.wall_height), 'furniture_sprites', 'gates/ladder.png');
-    
-    //var obj = new Ladder(game, game.width + 50, 360 - (_floor*this.wall_height)) //game.add.sprite(game.width + 50, 360 - (_floor*this.wall_height), 'furniture_sprites', 'gates/ladder.png');
-    obj.name = 'ladder';
-    obj.startY = 480   - (_floor*this.wall_height)
-    this.game.physics.arcade.enable(obj);
 
+    var i = Math.floor(Math.random()*3);
+    var obj;
+
+    switch (i) {
+      case 0 :
+        obj = new Coin(game, game.width + 50, 480   - (_floor*this.wall_height));
+        obj.name = 'coin';
+      break;
+      case 1 :
+        obj = new Enemy(game, game.width + 50, 480   - (_floor*this.wall_height));
+        obj.name = 'enemy';
+      break;
+      case 2 :
+        obj = new Ladder(game, game.width + 50, 480   - (_floor*this.wall_height));
+      break;
+    }
+
+    //var obj = new Ladder(game, game.width + 50, 360 - (_floor*this.wall_height)) //game.add.sprite(game.width + 50, 360 - (_floor*this.wall_height), 'furniture_sprites', 'gates/ladder.png');
+    obj.startY = 480 - (_floor*this.wall_height)
     this.groups.objects.add(obj)
   },
 
@@ -272,17 +314,17 @@ Game.prototype = {
 
   transitionFloor: function (_val) {
 
-    floor_transition += _val;
+    floor_transition += this.jump_speed;
     this.allowXmovement = false;
 
-    if (floor_transition >= this.wall_height) {
-      this.floor.starty += 120
+    if (floor_transition >= (this.wall_height*this.floor_jump)) {
+      this.floor.starty += (this.wall_height*this.floor_jump)
       this.updateObjectPosition();
       current_floor++;
       floor_transition = 0;
       jump = false;
       this.addition_speed += this.speed_increment;
-
+      this.hero.visible = true;
       if (this.addition_speed >= 10) {
         this.speedX += this.speed_increment;
         this.addition_speed = 0;
@@ -290,7 +332,7 @@ Game.prototype = {
       this.allowXmovement = true;
       this.floordisplay.newText(current_floor);
     }
-    if (floor_transition <= -this.wall_height) {
+    if (floor_transition <= -(this.wall_height*this.floor_jump)) {
       this.updateObjectPosition();
       current_floor--;
       floor_transition = 0;
@@ -300,12 +342,16 @@ Game.prototype = {
         this.speedX -= this.speed_increment;
         this.addition_speed = 0;
       }
-      this.floor.starty -= 120
+      this.floor.starty -= (this.wall_height*this.floor_jump)
       this.allowXmovement = true;
       this.floordisplay.newText(current_floor);
     }
   },
 
+  killHero: function () {
+    this.hero.destroy();
+    this.playing = false;
+  },
   // drawTile: function(_t, _x, _y) {
   //   var tile = this.getTile(_t);
   //   this.gameScene.renderXY(tile, (_x*this.wall_width)+wall_x, _y, false);
