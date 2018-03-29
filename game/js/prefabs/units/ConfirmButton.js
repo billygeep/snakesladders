@@ -4,7 +4,7 @@ var ConfirmButton = function (_game, _x, _y, _image1, _image2, _audio, _textpara
     this.imageup = _image1;
     this.imageover = _image2
 
-    Phaser.Sprite.call(this, _game, _x, _y, 'furniture_sprites', this.imageup);
+    Phaser.Sprite.call(this, _game, _x, _y, 'spritesheets', this.imageup);
 
     this.inputEnabled = true;
     this.input.useHandCursor = true;
@@ -16,8 +16,7 @@ var ConfirmButton = function (_game, _x, _y, _image1, _image2, _audio, _textpara
 
     //add text to the button
     if (_textparams) {
-        console.log(_textparams)
-        this.text = new GameText(_game, 0, 0, _textparams, style.titlestyle);
+        this.text = new GameText(_game, 0, 0, _textparams, style.titlestyle, 0.5, 0.5);
         this.addChild(this.text);
     }
 
@@ -34,12 +33,12 @@ ConfirmButton.prototype.onDown = function () {
     gameaudio.playSFX(this.audio);
 }
 ConfirmButton.prototype.onUp = function () {
-    this.loadTexture('furniture_sprites', this.imageup, 0);
+    this.loadTexture('spritesheets', this.imageup, 0);
 }
 ConfirmButton.prototype.onOver = function () {
-    this.loadTexture('furniture_sprites', this.imageover, 0);
+    this.loadTexture('spritesheets', this.imageover, 0);
 }
 ConfirmButton.prototype.onOut = function () {
-    this.loadTexture('furniture_sprites', this.imageup, 0);
+    this.loadTexture('spritesheets', this.imageup, 0);
 }
 

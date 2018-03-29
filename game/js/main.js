@@ -71,29 +71,13 @@ Main.prototype = {
     gameJSON = game.cache.getJSON('json');
     audioJSON = game.cache.getJSON('audiojson');
     
-
-    // var w = window.innerWidth;
-    // var h = (560/960) * w
-
     this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-
     game.state.add('Boot', Boot);
-
     this.loadFonts();
+    console.log('GO')
   },
 
-
-  createText : function () {
-    if (!fontLoaded || !gameCreated) return;
-    game.add.text(0, 0, 'Lorem ipsum', {
-        font: '12px Amatica SC',
-        fill: '#fff'
-    });
-  },
-
-
-
-  update() {
+  update: function() {
     if (this.fontsReady) {
       game.state.start('Boot');
     }
@@ -104,18 +88,6 @@ Main.prototype = {
 game.state.add('Main', Main);
 game.state.start('Main');
 
-
-//tracking the channel and page event
-// function trackingManager (_channel, _event) {
-
-//     var channel = _channel, event = _event;
-
-//     if (gamecopy.tracking.active) {
-//         btg.Controller.sendPageCall({  channel: channel, pageName: event });
-//     } else {
-//         console.log(channel, event)
-//     }
-// }
 
 //check for first interaction to set desktop/touchscreen
 window.addEventListener('touchstart', function onFirstTouch() {

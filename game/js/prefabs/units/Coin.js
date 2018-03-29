@@ -61,7 +61,7 @@ Ladder.prototype.update = function () {
 //create the graphical hero
 var Enemy = function (_game, _x, _y) {
   // call Phaser.Sprite constructor
-  Phaser.Sprite.call(this, _game, _x, _y, 'spritesheets', 'gates/ladder_01.jpg');
+  Phaser.Sprite.call(this, _game, _x, _y, 'spritesheets', 'enemy/enemy_01.png');
   this.anchor.setTo(0.5, 1);
   _game.physics.arcade.enable(this);
 

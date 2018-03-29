@@ -7,19 +7,19 @@
         <script src="http://www.nick.com/nick-assets/games/jsembed/jsembed.js"></script>    
         <script type="text/javascript" >      
         
-        // // Parameters configure jsembed itself.
-        // var params = {
-        //     //base: "/games/data/spongebob/spongebob-bikini-bottom-bop-em/html5/", // base url of all content. Defaults ""
-        //     base: "",
-        //     api: "", // If not a flambe game, leave it blank.
-        //     autoscale: "true", // update window.canvasScale on window resize? Defaults true.
-        //     indexroot: "true", // use index url as path root? If false, uses domain root instead. Defaults false (uses domain root).
-        //     //libs: ["yourLibrary.js"] // array of libs to embed before trying to launch app. Defaults []
-        // }           
-        // // Attributes will be set on the embed target for use by the app. "base" will be set as well.
-        // var attr = {                    
-        // };
-        // jsembed.embed("js/main.js", "embedtarget", "960", "560", params, attr);   //The first parameter will be your main js file
+        // Parameters configure jsembed itself.
+        var params = {
+            //base: "/games/data/spongebob/spongebob-bikini-bottom-bop-em/html5/", // base url of all content. Defaults ""
+            base: "",
+            api: "", // If not a flambe game, leave it blank.
+            autoscale: "true", // update window.canvasScale on window resize? Defaults true.
+            indexroot: "true", // use index url as path root? If false, uses domain root instead. Defaults false (uses domain root).
+            //libs: ["yourLibrary.js"] // array of libs to embed before trying to launch app. Defaults []
+        }           
+        // Attributes will be set on the embed target for use by the app. "base" will be set as well.
+        var attr = {                    
+        };
+        jsembed.embed("js/main.min.js", "embedtarget", "960", "560", params, attr);   //The first parameter will be your main js file
     
         </script>       
         
@@ -41,7 +41,7 @@
     <script src="js/states/Boot.js"></script>
     <script src="js/states/Menu.js"></script>
     <script src="js/states/Game.js"></script>
-    <script src="js/states/Intro.js"></script>
+    <script src="js/states/DeathScreen.js"></script>
 
     <script src="js/manager/AudioManager.js"></script>
 

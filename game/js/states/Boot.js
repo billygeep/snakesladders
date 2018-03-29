@@ -22,6 +22,7 @@ Boot.prototype = {
   addGameStates: function () {
     game.state.add("Menu",Menu);
     game.state.add("Game",Game);
+    game.state.add("DeathScreen",DeathScreen);
   },
 
   create: function() {

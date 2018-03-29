@@ -58,9 +58,12 @@ gulp.task('audio', function() {
 })
 
 gulp.task('js', function(){
-  return gulp.src('game/js/phaser_loaded/**/*.js')
+  return gulp.src('game/js/**/*.js')
   // Caching images that ran through imagemin
-  .pipe(gulp.dest('dist/js/phaser_loaded'))
+  .pipe(uglify().on('error', function(e){
+            console.log(e);
+         }))
+  .pipe(gulp.dest('dist/js'))
 });
 
 gulp.task('css', function(){
@@ -86,10 +89,12 @@ gulp.task('browserSync', function() {
 
 gulp.task('build', function (callback) {
   runSequence('clean:dist', 
-    ['useref', 'fonts', 'audio', 'images', 'scenes', 'shareimages', 'data', 'js', 'css', 'shareables'],
+    ['useref', 'fonts', 'audio', 'images', 'scenes', 'data', 'css'],
     callback
   )
 })
+
+
 
 gulp.task('clean:dist', function() {
   return del.sync('dist');

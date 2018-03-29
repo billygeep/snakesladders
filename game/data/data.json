@@ -12,7 +12,15 @@
     },
     "menu_screen": {
         "title": { "text": "Select a game to begin!", "fontName": "Geek-a-byte-2", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 },
-        "select_button": { "text": "Select", "fontName": "Geek-a-byte-2", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 }
+        "select_button": { "text": "REPLAY", "fontName": "Geek-a-byte-2", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 }
+    },
+    "deathscreen": {
+        "title": { "text": "You died! Try again?", "fontName": "Geek-a-byte-2", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 },
+        "select_button": { "text": "REPLAY", "fontName": "Geek-a-byte-2", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 }
+    },
+    "ingame": {
+        "floor_counter": { "text": "0", "fontName": "Geek-a-byte-2", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 },
+        "bank_balance": { "text": "0", "fontName": "Geek-a-byte-2", "fontScale": 1, "offsetX": 0, "offsetY": 0, "lineSpacing": -8 }
     },
     "tracking": {
         "active": false,
